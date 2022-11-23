@@ -1,0 +1,13 @@
+﻿global using Microsoft.EntityFrameworkCore;
+global using Microsoft.EntityFrameworkCore.ChangeTracking;
+global using Microsoft.EntityFrameworkCore.Infrastructure;
+global using Microsoft.EntityFrameworkCore.Metadata;
+global using Microsoft.EntityFrameworkCore.Storage;
+global using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+global using Microsoft.EntityFrameworkCore.ValueGeneration;
+global using Microsoft.Extensions.DependencyInjection;
+global using System.Collections.Immutable;
+global using System.Data;
+global using System.Data.Common;
+global using System.Linq.Expressions;
+global using System.Reflection;
