@@ -1,11 +1,11 @@
 ﻿namespace IronType;
 
-public sealed class TypeData<TApp, TFramework> : ITypeData
+public sealed class TypeMapping<TApp, TFramework> : ITypeMapping
 {
     private readonly Func<TApp, TFramework> _convertToFrameworkValue;
     private readonly Func<TFramework, TApp> _convertToAppValue;
 
-    public TypeData(Func<TApp, TFramework> convertToFrameworkValue, Func<TFramework, TApp> convertToAppValue)
+    public TypeMapping(Func<TApp, TFramework> convertToFrameworkValue, Func<TFramework, TApp> convertToAppValue)
     {
         _convertToFrameworkValue = convertToFrameworkValue;
         _convertToAppValue = convertToAppValue;
@@ -38,7 +38,7 @@ public sealed class TypeData<TApp, TFramework> : ITypeData
     }
 }
 
-public interface ITypeData
+public interface ITypeMapping
 {
     public Type FrameworkType { get; }
 
@@ -49,14 +49,14 @@ public interface ITypeData
     public object? ConvertToAppValue(object? frameworkValue);
 }
 
-public static class SimpleTypeDataFactory
+public static class SimpleTypeMappingFactory
 {
-    public static ITypeData Create<TApp, TFramework>()
+    public static ITypeMapping Create<TApp, TFramework>()
     {
         var convertToAppValue = CreateConverter<TApp, TFramework>();
         var convertToFrameworkValue = CreateConverter<TFramework, TApp>();
 
-        return new TypeData<TApp, TFramework>(convertToFrameworkValue, convertToAppValue);
+        return new TypeMapping<TApp, TFramework>(convertToFrameworkValue, convertToAppValue);
     }
 
     public static Func<TFrom,TTo> CreateConverter<TTo,TFrom>()

@@ -4,11 +4,11 @@ public class IronTypeConfigurationBuilder
 {
     public bool SetGlobal { get; set; } = false;
 
-    public IList<ITypeData> TypeData { get; } = new List<ITypeData>();
+    public IList<ITypeMapping> TypeMappings { get; } = new List<ITypeMapping>();
 
     public IronTypeConfiguration Build()
     {
-        var config = new IronTypeConfiguration(TypeData);
+        var config = new IronTypeConfiguration(TypeMappings);
 
         if (SetGlobal) IronTypeConfiguration.Global = config;
 
@@ -25,9 +25,9 @@ public static class IronTypeConfigurationBuilderExtensions
         return ironTypeConfigurationBuilder;
     }
 
-    public static IronTypeConfigurationBuilder AddTypeData(this IronTypeConfigurationBuilder ironTypeConfigurationBuilder, ITypeData typeData)
+    public static IronTypeConfigurationBuilder AddTypeMapping(this IronTypeConfigurationBuilder ironTypeConfigurationBuilder, ITypeMapping typeMapping)
     {
-        ironTypeConfigurationBuilder.TypeData.Add(typeData);
+        ironTypeConfigurationBuilder.TypeMappings.Add(typeMapping);
 
         return ironTypeConfigurationBuilder;
     }

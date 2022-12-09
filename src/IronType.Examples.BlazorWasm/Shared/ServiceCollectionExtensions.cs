@@ -7,7 +7,7 @@ public static class ServiceCollectionExtensions
         serviceCollection.AddIronType(x => 
             x.SetGlobal()
             .AddNodaTime()
-            .AddTypeData(SimpleTypeDataFactory.Create<OrderId, Guid>()));
+            .AddTypeMapping(SimpleTypeMappingFactory.Create<OrderId, Guid>()));
 
         return serviceCollection;
     }

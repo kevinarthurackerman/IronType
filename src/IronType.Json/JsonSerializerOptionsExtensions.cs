@@ -13,7 +13,7 @@ public static class JsonSerializerOptionsExtensions
 
         ironTypeConfiguration ??= IronTypeConfiguration.Global;
 
-        var converters = ironTypeConfiguration.TypeData
+        var converters = ironTypeConfiguration.TypeMapping
             .Where(x => frameworkTypesLookup.Contains(x.FrameworkType))
             .GroupBy(x => x.AppType)
             .Select(x => x.Last())
@@ -32,8 +32,8 @@ public static class JsonSerializerOptionsExtensions
         return jsonSerializerOptions;
     }
 
-    private static JsonConverter CreateJsonConverter<TApp, TFramework>(TypeData<TApp, TFramework> typeData)
-        => new DelegatingJsonConverter<TApp, TFramework>(typeData.ConvertToFrameworkValue, typeData.ConvertToAppValue);
+    private static JsonConverter CreateJsonConverter<TApp, TFramework>(TypeMapping<TApp, TFramework> typeMapping)
+        => new DelegatingJsonConverter<TApp, TFramework>(typeMapping.ConvertToFrameworkValue, typeMapping.ConvertToAppValue);
 }
 
 public class UseIronTypeConfiguration

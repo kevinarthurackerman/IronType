@@ -8,7 +8,7 @@ public static class ServiceCollectionExtensions
         configure?.Invoke(config);
 
         serviceCollection.AddOptions();
-
+        
         serviceCollection.AddTransient<IConfigureOptions<JsonOptions>>(sp =>
         {
             var ironTypeConfiguration = sp.GetService<IronTypeConfiguration>();

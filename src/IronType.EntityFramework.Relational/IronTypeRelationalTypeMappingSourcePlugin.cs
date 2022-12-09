@@ -11,7 +11,7 @@ public class IronTypeRelationalTypeMappingSourcePlugin : IRelationalTypeMappingS
     {
         var frameworkTypesLookup = frameworkTypes.ToImmutableHashSet();
 
-        _relationalTypeMappingLookupByType = ironTypeConfiguration.TypeData
+        _relationalTypeMappingLookupByType = ironTypeConfiguration.TypeMapping
             .Where(x => frameworkTypesLookup.Contains(x.FrameworkType))
             .GroupBy(x => x.AppType)
             .Select(x => x.Last())
@@ -37,22 +37,22 @@ public class IronTypeRelationalTypeMappingSourcePlugin : IRelationalTypeMappingS
     }
 
     private static RelationalTypeMapping CreateTypeMapping<TApp, TFramework>(
-        TypeData<TApp, TFramework> typeData,
+        TypeMapping<TApp, TFramework> typeMapping,
         IServiceProvider serviceProvider)
     {
         var relationalTypeMappingSource = serviceProvider
             .GetRequiredService<IRelationalTypeMappingSource>();
 
         var frameworkTypeMapping = relationalTypeMappingSource
-            .FindMapping(typeData.FrameworkType);
+            .FindMapping(typeMapping.FrameworkType);
 
         if (frameworkTypeMapping == null)
-            throw new InvalidOperationException($"Relational type mapping for framework type '{typeData.FrameworkType}' not found.");
+            throw new InvalidOperationException($"Relational type mapping for framework type '{typeMapping.FrameworkType}' not found.");
 
         return (RelationalTypeMapping)frameworkTypeMapping
-            .Clone(new RelationalTypeMappingInfo(typeData.AppType))
+            .Clone(new RelationalTypeMappingInfo(typeMapping.AppType))
             .Clone(new ValueConverter<TApp, TFramework>(
-                x => typeData.ConvertToFrameworkValue(x),
-                x => typeData.ConvertToAppValue(x)));
+                x => typeMapping.ConvertToFrameworkValue(x),
+                x => typeMapping.ConvertToAppValue(x)));
     }
 }

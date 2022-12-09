@@ -2,12 +2,12 @@
 
 public class IronTypeConfiguration
 {
-    public static IronTypeConfiguration Global { get; set; } = new(Array.Empty<ITypeData>());
+    public static IronTypeConfiguration Global { get; set; } = new(Array.Empty<ITypeMapping>());
 
-    public ImmutableList<ITypeData> TypeData { get; }
+    public ImmutableList<ITypeMapping> TypeMapping { get; }
 
-    internal IronTypeConfiguration(IEnumerable<ITypeData> typeData)
+    internal IronTypeConfiguration(IEnumerable<ITypeMapping> typeMapping)
     {
-        TypeData = typeData.ToImmutableList();
+        TypeMapping = typeMapping.ToImmutableList();
     }
 }
