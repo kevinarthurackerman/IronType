@@ -34,12 +34,13 @@ public static class JsonSerializerOptionsExtensions
 
     private static JsonConverter CreateJsonConverter<TApp, TFramework>(TypeData<TApp, TFramework> typeData)
         => new DelegatingJsonConverter<TApp, TFramework>(typeData.ConvertToFrameworkValue, typeData.ConvertToAppValue);
+}
 
-    public class UseIronTypeConfiguration
-    {
-        public IronTypeConfiguration? IronTypeConfiguration { get; set; }
+public class UseIronTypeConfiguration
+{
+    public IronTypeConfiguration? IronTypeConfiguration { get; set; }
 
-        public IList<Type> FrameworkTypes { get; } = new List<Type>
+    public IList<Type> FrameworkTypes { get; } = new List<Type>
         {
             typeof(bool),
             typeof(bool?),
@@ -74,5 +75,4 @@ public static class JsonSerializerOptionsExtensions
             typeof(ushort),
             typeof(ushort?)
         };
-    }
 }

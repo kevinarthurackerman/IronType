@@ -11,4 +11,11 @@ public static class ServiceCollectionExtensions
 
         return serviceCollection;
     }
+
+    public static IServiceCollection AddIronType(this IServiceCollection serviceCollection, IronTypeConfiguration configuration)
+    {
+        serviceCollection.AddSingleton(configuration);
+
+        return serviceCollection;
+    }
 }

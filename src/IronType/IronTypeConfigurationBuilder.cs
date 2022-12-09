@@ -6,3 +6,13 @@ public class IronTypeConfigurationBuilder
 
     public IronTypeConfiguration Build() => new(TypeData);
 }
+
+public static class IronTypeConfigurationBuilderExtensions
+{
+    public static IronTypeConfigurationBuilder AddTypeData(this IronTypeConfigurationBuilder ironTypeConfigurationBuilder, ITypeData typeData)
+    {
+        ironTypeConfigurationBuilder.TypeData.Add(typeData);
+
+        return ironTypeConfigurationBuilder;
+    }
+}

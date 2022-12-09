@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(x =>
     x.UseSqlite("FileName=app.db");
 });
 
-builder.Services.AddControllers(); //.AddJsonOptions(x => x.JsonSerializerOptions.UseIronType());
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
