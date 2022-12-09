@@ -12,10 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IronType.DependencyInjection\IronType.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\IronType.EntityFramework.Relational\IronType.EntityFramework.Relational.csproj" />
-    <ProjectReference Include="..\..\IronType.Json.DependencyInjection\IronType.Json.DependencyInjection.csproj" />
-    <ProjectReference Include="..\..\IronType.NodaTime\IronType.NodaTime.csproj" />
+    <ProjectReference Include="..\..\IronType.Json\IronType.Json.csproj" />
     <ProjectReference Include="..\Shared\IronType.Examples.BlazorWasm.Shared.csproj" />
   </ItemGroup>
 

@@ -1,0 +1,41 @@
+﻿@page "/orders"
+@inject HttpClient Http
+
+<PageTitle>Orders</PageTitle>
+
+<h1>Orders</h1>
+
+@if (orders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Ordered On</th>
+                <th>Customer Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td>@order.OrderedOn</td>
+                    <td>@order.CustomerName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private OrderViewModel[]? orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web).UseIronType();
+        orders = await Http.GetFromJsonAsync<OrderViewModel[]>("orders", options);
+    }
+}

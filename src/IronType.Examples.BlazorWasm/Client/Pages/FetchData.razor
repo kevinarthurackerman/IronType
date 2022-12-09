@@ -1,5 +1,4 @@
 ﻿@page "/fetchdata"
-@using IronType.Examples.BlazorWasm.Shared
 @inject HttpClient Http
 
 <PageTitle>Weather forecast</PageTitle>
@@ -42,6 +41,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast");
+        var options = new JsonSerializerOptions().UseIronType();
+        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("WeatherForecast", options);
     }
 }

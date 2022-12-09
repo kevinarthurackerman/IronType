@@ -1,15 +1,11 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddIronType(x =>
-{
-    x.UseNodaTime();
-    // x.UseJson();
-    x.TypeData.Add(SimpleTypeDataFactory.Create<OrderId, Guid>());
-});
-
-builder.Services.UseIronTypeJson();
+builder.Services.AddSharedServices();
 
 builder.Services.AddDbContext<AppDbContext>(x =>
 {
@@ -17,7 +13,8 @@ builder.Services.AddDbContext<AppDbContext>(x =>
     x.UseSqlite("FileName=app.db");
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(x => x.JsonSerializerOptions.UseIronType());
 
 var app = builder.Build();
 
@@ -38,6 +35,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseCors(x => x.AllowAnyOrigin()
+    .AllowAnyMethod()
+    .AllowAnyHeader());
 
 app.MapControllers();
 
@@ -60,6 +61,10 @@ using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
     dbContext.SaveChanges();
 
     var persistedOrder = dbContext.Orders.FirstOrDefault();
+
+    var json = JsonSerializer.Serialize(persistedOrder, new JsonSerializerOptions().UseIronType());
+    
+    var fromJson = JsonSerializer.Deserialize<Order>(json, new JsonSerializerOptions().UseIronType());
 }
 
 app.Run();
