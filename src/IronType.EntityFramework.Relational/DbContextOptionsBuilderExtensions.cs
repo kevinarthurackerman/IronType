@@ -17,8 +17,7 @@ public static class DbContextOptionsBuilderExtensions
                 ?? coreOpts.ApplicationServiceProvider?.GetService<IronTypeConfiguration>();
         }
 
-        if (ironTypeConfiguration == null)
-            throw new InvalidOperationException($"No {nameof(IronTypeConfiguration)} is was configured, registered to the {nameof(CoreOptionsExtension.InternalServiceProvider)}, or registered to the {nameof(CoreOptionsExtension.ApplicationServiceProvider)}.");
+        ironTypeConfiguration ??= IronTypeConfiguration.Global;
 
         ((IDbContextOptionsBuilderInfrastructure)optionsBuilder)
             .AddOrUpdateExtension(new IronTypeDbContextOptionsExtension(ironTypeConfiguration, config.FrameworkTypes));

@@ -20,7 +20,7 @@ public class IronTypeRelationalTypeMappingSourcePlugin : IRelationalTypeMappingS
                 var initializeFunc = () => (RelationalTypeMapping)typeof(IronTypeRelationalTypeMappingSourcePlugin)
                     .GetMethod(nameof(CreateTypeMapping), BindingFlags.NonPublic | BindingFlags.Static)!
                     .MakeGenericMethod(x.AppType, x.FrameworkType)
-                    .Invoke(this, new object?[] { x, serviceProvider })!;
+                    .Invoke(null, new object?[] { x, serviceProvider })!;
 
                 return (RelationalTypeMapping)new LazyInitializedRelationalTypeMapping(x.AppType, initializeFunc);
             })

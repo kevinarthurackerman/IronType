@@ -1,6 +1,6 @@
-﻿namespace IronType.Examples.BlazorWasm.Server.Data;
+﻿namespace IronType.Examples.BlazorWasm.Shared;
 
-public class Order
+public class OrderViewModel
 {
     public OrderId Id { get; set; }
     public LocalDate OrderedOn { get; set; }

@@ -5,17 +5,19 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddIronType(x =>
 {
     x.UseNodaTime();
+    // x.UseJson();
     x.TypeData.Add(SimpleTypeDataFactory.Create<OrderId, Guid>());
 });
 
-builder.Services.AddDbContext<AppDbContext>((sp, x) =>
+builder.Services.UseIronTypeJson();
+
+builder.Services.AddDbContext<AppDbContext>(x =>
 {
     x.UseIronType();
     x.UseSqlite("FileName=app.db");
 });
 
-builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
+builder.Services.AddControllers(); //.AddJsonOptions(x => x.JsonSerializerOptions.UseIronType());
 
 var app = builder.Build();
 
@@ -33,15 +35,11 @@ else
 
 app.UseHttpsRedirection();
 
-app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
 
-
-app.MapRazorPages();
 app.MapControllers();
-app.MapFallbackToFile("index.html");
 
 using (var scope = app.Services.CreateScope())
 using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
@@ -53,7 +51,8 @@ using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
     var order = new Order
     {
         Id = new OrderId(Guid.NewGuid()),
-        OrderedOn = LocalDate.FromDateTime(DateTime.Now)
+        OrderedOn = LocalDate.FromDateTime(DateTime.Now),
+        CustomerName = "John Doe"
     };
 
     dbContext.Add(order);
