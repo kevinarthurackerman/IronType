@@ -2,10 +2,7 @@
 
 public class IronTypeConfigurationBuilder
 {
-    public IList<Type> TypeDataTypes { get; } = new List<Type>();
+    public IList<ITypeData> TypeData { get; } = new List<ITypeData>();
 
-    public Action<AdaptationFailureContext>? OnAdaptationFailure { get; set; }
-        = context => throw new InvalidOperationException($"Unable to adapt application Type '{context.AppType}' to any framework Type for framework '{context.Framework}'.");
-
-    public IronTypeConfiguration Build() => new(this);
+    public IronTypeConfiguration Build() => new(TypeData);
 }

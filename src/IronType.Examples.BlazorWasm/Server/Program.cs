@@ -4,7 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddIronType(x =>
 {
-    x.TypeDataTypes.Add(typeof(OrderIdTypeData));
+    x.UseNodaTime();
+    x.TypeData.Add(SimpleTypeDataFactory.Create<OrderId, Guid>());
 });
 
 builder.Services.AddDbContext<AppDbContext>((sp, x) =>
@@ -48,6 +49,18 @@ using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
     dbContext.Database.EnsureDeleted();
     dbContext.Database.EnsureCreated();
     dbContext.Database.Migrate();
+
+    var order = new Order
+    {
+        Id = new OrderId(Guid.NewGuid()),
+        OrderedOn = LocalDate.FromDateTime(DateTime.Now)
+    };
+
+    dbContext.Add(order);
+
+    dbContext.SaveChanges();
+
+    var persistedOrder = dbContext.Orders.FirstOrDefault();
 }
 
 app.Run();

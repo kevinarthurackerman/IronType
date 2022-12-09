@@ -3,8 +3,5 @@
 public class Order
 {
     public OrderId Id { get; set; }
+    public LocalDate OrderedOn { get; set; }
 }
-
-public readonly record struct OrderId(Guid Value);
-
-public class OrderIdTypeData : SimpleTypeData<OrderId, Guid> { }

@@ -2,27 +2,10 @@
 
 public class IronTypeConfiguration
 {
-    public ImmutableList<Type> TypeDataTypes { get; }
+    public ImmutableList<ITypeData> TypeData { get; }
 
-    public Action<AdaptationFailureContext>? OnAdaptationFailure { get; }
-
-    internal IronTypeConfiguration(IronTypeConfigurationBuilder ironTypeConfiguration)
+    internal IronTypeConfiguration(IEnumerable<ITypeData> typeData)
     {
-        var invalidTypeData = ironTypeConfiguration.TypeDataTypes
-            .Where(x => !x.IsTypeData())
-            .ToArray();
-
-        if (invalidTypeData.Any())
-        {
-            var innerExceptions = invalidTypeData
-                .Select(x => new Exception($"'{x}' does not extend '{typeof(TypeData<,>)}'."))
-                .ToArray();
-
-            throw new AggregateException($"One or more '{typeof(Type)}' provided in '{nameof(IronTypeConfigurationBuilder)}.{nameof(TypeDataTypes)}' do not extend '{typeof(TypeData<,>)}'.", innerExceptions);
-        }
-
-        TypeDataTypes = ironTypeConfiguration.TypeDataTypes.ToImmutableList();
-
-        OnAdaptationFailure = ironTypeConfiguration.OnAdaptationFailure;
+        TypeData = typeData.ToImmutableList();
     }
 }

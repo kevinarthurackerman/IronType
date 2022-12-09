@@ -1,49 +1,65 @@
 ﻿namespace IronType;
 
-public abstract class TypeData<TApp, TFramework> : TypeData
+public sealed class TypeData<TApp, TFramework> : ITypeData
 {
-    public abstract TFramework ConvertToFrameworkValue(TApp appValue);
-
-    public abstract TApp ConvertToAppValue(TFramework frameworkValue);
-
-    public sealed override Type FrameworkType => typeof(TFramework);
-
-    public sealed override Type AppType => typeof(TApp);
-
-    public sealed override object? ConvertToFrameworkValue(object? appValue)
-        => ConvertToFrameworkValue(appValue);
-
-    public sealed override object? ConvertToAppValue(object? appValue)
-        => ConvertToAppValue(appValue);
-}
-
-public abstract class TypeData
-{
-    public virtual int Priority { get; } = 0;
-
-    public abstract Type FrameworkType { get; }
-
-    public abstract Type AppType { get; }
-
-    public abstract object? ConvertToFrameworkValue(object? appValue);
-
-    public abstract object? ConvertToAppValue(object? frameworkValue);
-
-    public readonly record struct FrameworkAdapterFilterContext(string frameworkName);
-}
-
-public class SimpleTypeData<TApp, TFramework> : TypeData<TApp, TFramework>
-{
-    private readonly Func<TFramework, TApp> _convertToAppValue;
     private readonly Func<TApp, TFramework> _convertToFrameworkValue;
+    private readonly Func<TFramework, TApp> _convertToAppValue;
 
-    public SimpleTypeData()
+    public TypeData(Func<TApp, TFramework> convertToFrameworkValue, Func<TFramework, TApp> convertToAppValue)
     {
-        _convertToAppValue = CreateConverter<TApp, TFramework>();
-        _convertToFrameworkValue = CreateConverter<TFramework, TApp>();
+        _convertToFrameworkValue = convertToFrameworkValue;
+        _convertToAppValue = convertToAppValue;
     }
 
-    public Func<TFrom,TTo> CreateConverter<TTo,TFrom>()
+    public Type FrameworkType => typeof(TFramework);
+
+    public Type AppType => typeof(TApp);
+
+    public TFramework ConvertToFrameworkValue(TApp appValue)
+        => _convertToFrameworkValue(appValue);
+
+    public TApp ConvertToAppValue(TFramework frameworkValue)
+        => _convertToAppValue(frameworkValue);
+
+    public object? ConvertToFrameworkValue(object? appValue)
+    {
+        if (appValue is TApp typedAppValue)
+            return _convertToFrameworkValue(typedAppValue);
+
+        throw new ArgumentException($"'{nameof(appValue)}' must be of type '{typeof(TApp)}'.");
+    }
+
+    public object? ConvertToAppValue(object? frameworkValue)
+    {
+        if (frameworkValue is TFramework typedAppValue)
+            return _convertToAppValue(typedAppValue);
+
+        throw new ArgumentException($"'{nameof(frameworkValue)}' must be of type '{typeof(TFramework)}'.");
+    }
+}
+
+public interface ITypeData
+{
+    public Type FrameworkType { get; }
+
+    public Type AppType { get; }
+
+    public object? ConvertToFrameworkValue(object? appValue);
+
+    public object? ConvertToAppValue(object? frameworkValue);
+}
+
+public static class SimpleTypeDataFactory
+{
+    public static ITypeData Create<TApp, TFramework>()
+    {
+        var convertToAppValue = CreateConverter<TApp, TFramework>();
+        var convertToFrameworkValue = CreateConverter<TFramework, TApp>();
+
+        return new TypeData<TApp, TFramework>(convertToFrameworkValue, convertToAppValue);
+    }
+
+    public static Func<TFrom,TTo> CreateConverter<TTo,TFrom>()
     {
         var ctors = typeof(TTo).GetConstructors();
         
@@ -69,10 +85,4 @@ public class SimpleTypeData<TApp, TFramework> : TypeData<TApp, TFramework>
 
         throw new InvalidOperationException($"No supported conversion from '{typeof(TFrom)}' to '{typeof(TTo)}' found. Supported conversions are a single public constructor on '{typeof(TTo)}' that takes a single parameter '{typeof(TFrom)}', or a single property on '{typeof(TFrom)}' that returns a value of '{typeof(TTo)}'.");
     }
-
-    public override TApp ConvertToAppValue(TFramework frameworkValue)
-        => _convertToAppValue(frameworkValue);
-
-    public override TFramework ConvertToFrameworkValue(TApp appValue)
-        => _convertToFrameworkValue(appValue);
 }

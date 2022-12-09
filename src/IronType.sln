@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.Examples.BlazorWas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.EntityFramework.Relational", "IronType.EntityFramework.Relational\IronType.EntityFramework.Relational.csproj", "{A929E186-F4B7-4F0F-9ED4-3A2CC44824EA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronType.DependencyInjection", "IronType.DependencyInjection\IronType.DependencyInjection.csproj", "{62EB66F4-302A-4404-AA56-CBC1028B108D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronType.NodaTime", "IronType.NodaTime\IronType.NodaTime.csproj", "{4606C364-33E5-4097-BEAF-16D1DDF1AA3E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -45,6 +49,14 @@ Global
 		{A929E186-F4B7-4F0F-9ED4-3A2CC44824EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A929E186-F4B7-4F0F-9ED4-3A2CC44824EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A929E186-F4B7-4F0F-9ED4-3A2CC44824EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62EB66F4-302A-4404-AA56-CBC1028B108D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62EB66F4-302A-4404-AA56-CBC1028B108D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62EB66F4-302A-4404-AA56-CBC1028B108D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62EB66F4-302A-4404-AA56-CBC1028B108D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4606C364-33E5-4097-BEAF-16D1DDF1AA3E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4606C364-33E5-4097-BEAF-16D1DDF1AA3E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4606C364-33E5-4097-BEAF-16D1DDF1AA3E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4606C364-33E5-4097-BEAF-16D1DDF1AA3E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
