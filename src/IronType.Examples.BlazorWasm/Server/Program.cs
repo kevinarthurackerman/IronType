@@ -39,29 +39,4 @@ app.UseCors(x => x.AllowAnyOrigin()
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-using (var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>())
-{
-    dbContext.Database.EnsureDeleted();
-    dbContext.Database.EnsureCreated();
-    dbContext.Database.Migrate();
-
-    var order = new Order
-    {
-        Id = new OrderId(Guid.NewGuid()),
-        OrderedOn = LocalDate.FromDateTime(DateTime.Now),
-        CustomerName = "John Doe"
-    };
-
-    dbContext.Add(order);
-
-    dbContext.SaveChanges();
-
-    var persistedOrder = dbContext.Orders.FirstOrDefault();
-
-    var json = JsonSerializer.Serialize(persistedOrder, new JsonSerializerOptions().UseIronType());
-    
-    var fromJson = JsonSerializer.Deserialize<Order>(json, new JsonSerializerOptions().UseIronType());
-}
-
 app.Run();
