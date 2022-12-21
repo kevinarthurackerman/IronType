@@ -16,7 +16,6 @@ public class IronTypeDbContextOptionsExtension : IDbContextOptionsExtension
     public void ApplyServices(IServiceCollection services)
     {
         services.AddSingleton<IRelationalTypeMappingSourcePlugin>(sp => new IronTypeRelationalTypeMappingSourcePlugin(sp, _ironTypeConfiguration, _frameworkTypes));
-        services.AddScoped<IMethodCallTranslatorPlugin>(sp => new IronTypeMethodCallTranslatorPlugin(sp, _ironTypeConfiguration));
     }
 
     public void Validate(IDbContextOptions options)

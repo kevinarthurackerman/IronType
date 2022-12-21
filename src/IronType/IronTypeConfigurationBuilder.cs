@@ -6,11 +6,9 @@ public class IronTypeConfigurationBuilder
 
     public IList<ITypeMapping> TypeMappings { get; } = new List<ITypeMapping>();
 
-    public IList<IMethodMapping> MethodMappings { get; } = new List<IMethodMapping>();
-
     public IronTypeConfiguration Build()
     {
-        var config = new IronTypeConfiguration(TypeMappings, MethodMappings);
+        var config = new IronTypeConfiguration(TypeMappings);
 
         if (SetGlobal) IronTypeConfiguration.Global = config;
 
@@ -30,13 +28,6 @@ public static class IronTypeConfigurationBuilderExtensions
     public static IronTypeConfigurationBuilder AddTypeMapping(this IronTypeConfigurationBuilder ironTypeConfigurationBuilder, ITypeMapping typeMapping)
     {
         ironTypeConfigurationBuilder.TypeMappings.Add(typeMapping);
-
-        return ironTypeConfigurationBuilder;
-    }
-
-    public static IronTypeConfigurationBuilder AddMethodMapping(this IronTypeConfigurationBuilder ironTypeConfigurationBuilder, IMethodMapping methodMapping)
-    {
-        ironTypeConfigurationBuilder.MethodMappings.Add(methodMapping);
 
         return ironTypeConfigurationBuilder;
     }

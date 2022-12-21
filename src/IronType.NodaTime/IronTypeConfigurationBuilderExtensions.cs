@@ -2,13 +2,6 @@
 
 public static class IronTypeConfigurationBuilderExtensions
 {
-    private static readonly MethodInfo _localDatePlusDaysMethodInfo = typeof(LocalDate).GetMethod(nameof(LocalDate.PlusDays))!;
-    private static readonly MethodInfo _dateTimeAddDaysMethodInfo = typeof(DateTime).GetMethod(nameof(DateTime.AddDays))!;
-
-    private static readonly MethodInfo _localDateAt = typeof(LocalDate).GetMethod(nameof(LocalDate.At))!;
-    private static readonly MethodInfo _activatorCreateInstance
-        = typeof(Activator).GetMethod(nameof(Activator.CreateInstance), new[] { typeof(Type), typeof(object?[]) })!;
-
     public static IronTypeConfigurationBuilder AddNodaTime(this IronTypeConfigurationBuilder ironTypeConfigurationBuilder)
     {
         var zonedDateTimePattern = ZonedDateTimePattern.GeneralFormatOnlyIso;
@@ -34,20 +27,6 @@ public static class IronTypeConfigurationBuilderExtensions
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, DateTime>(x => new DateTime(1900, 1, 1).Add(x.ToTimeOnly().ToTimeSpan()), x => LocalTime.FromTimeOnly(TimeOnly.FromDateTime(x))));
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, TimeSpan>(x => x.ToTimeOnly().ToTimeSpan(), x => LocalTime.FromTimeOnly(TimeOnly.FromTimeSpan(x))));
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, TimeOnly>(x => x.ToTimeOnly(), x => LocalTime.FromTimeOnly(x)));
-
-        ironTypeConfigurationBuilder.AddMethodMapping(new MethodMapping(
-            info => info.Method == _localDatePlusDaysMethodInfo,
-            (info, ctx) => new MethodMappingInfo(
-                ctx.Convert(info.Instance!, typeof(DateTime)),
-                _dateTimeAddDaysMethodInfo,
-                new[] { ctx.Convert(info.Arguments[0], typeof(double)) })));
-
-        ironTypeConfigurationBuilder.AddMethodMapping(new MethodMapping(
-            info => info.Method == _localDateAt,
-            (info, ctx) => new MethodMappingInfo(
-                null,
-                _activatorCreateInstance,
-                new[] { ctx.Constant(typeof(DateTime), typeof(Type)), ctx.Convert(info.Arguments[0], typeof(double)) })));
 
         return ironTypeConfigurationBuilder;
     }

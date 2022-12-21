@@ -3,15 +3,12 @@
 public class IronTypeConfiguration
 {
     public static IronTypeConfiguration Global { get; set; }
-        = new(Array.Empty<ITypeMapping>(), Array.Empty<IMethodMapping>());
+        = new(Array.Empty<ITypeMapping>());
 
     public ImmutableList<ITypeMapping> TypeMapping { get; }
 
-    public ImmutableList<IMethodMapping> MethodMappings { get; }
-
-    internal IronTypeConfiguration(IEnumerable<ITypeMapping> typeMapping, IEnumerable<IMethodMapping> methodMappings)
+    internal IronTypeConfiguration(IEnumerable<ITypeMapping> typeMapping)
     {
         TypeMapping = typeMapping.ToImmutableList();
-        MethodMappings = methodMappings.ToImmutableList();
     }
 }
