@@ -10,6 +10,7 @@ public class IronTypeMethodCallTranslatorPlugin : IMethodCallTranslatorPlugin
     {
         Translators = ironTypeConfiguration.MethodMappings
             .Select(x => new PassthroughMethodCallTranslator(
+                x.CanMap,
                 x.ConvertToFrameworkMethod,
                 () => serviceProvider.GetRequiredService<ISqlExpressionFactory>(),
                 () => serviceProvider.GetRequiredService<IMethodCallTranslatorProvider>(),

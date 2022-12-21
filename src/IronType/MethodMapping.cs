@@ -2,20 +2,28 @@
 
 public sealed class MethodMapping : IMethodMapping
 {
-    private readonly Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo?> _convertToFrameworkMethod;
+    private readonly Func<MethodMappingInfo, bool> _canMap;
+    private readonly Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo> _convertToFrameworkMethod;
 
-    public MethodMapping(Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo?> convertToFrameworkMethod)
+    public MethodMapping(
+        Func<MethodMappingInfo,bool> canMap,
+        Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo> convertToFrameworkMethod)
     {
+        _canMap = canMap;
         _convertToFrameworkMethod = convertToFrameworkMethod;
     }
 
-    public MethodMappingInfo? ConvertToFrameworkMethod(MethodMappingInfo appMethodMappingInfo, ConvertToFrameworkMethodContext context)
+    public bool CanMap(MethodMappingInfo appMethodMappingInfo)
+        => _canMap(appMethodMappingInfo);
+
+    public MethodMappingInfo ConvertToFrameworkMethod(MethodMappingInfo appMethodMappingInfo, ConvertToFrameworkMethodContext context)
         => _convertToFrameworkMethod(appMethodMappingInfo, context);
 }
 
 public interface IMethodMapping
 {
-    public MethodMappingInfo? ConvertToFrameworkMethod(MethodMappingInfo appMethodMappingInfo, ConvertToFrameworkMethodContext context);
+    public bool CanMap(MethodMappingInfo appMethodMappingInfo);
+    public MethodMappingInfo ConvertToFrameworkMethod(MethodMappingInfo appMethodMappingInfo, ConvertToFrameworkMethodContext context);
 }
 
 public record MethodMappingInfo(Expression? Instance, MethodInfo Method, IReadOnlyList<Expression> Arguments);
@@ -42,6 +50,6 @@ public class ConvertToFrameworkMethodContext
     public Expression ConvertToFramework(Expression value)
         => _convertToFramework(value);
 
-    public Expression Create(object? value, Type type)
+    public Expression Constant(object? value, Type type)
         => _createConstant(value, type);
 }

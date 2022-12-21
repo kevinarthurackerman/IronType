@@ -2,17 +2,20 @@
 
 internal class PassthroughMethodCallTranslator : IMethodCallTranslator
 {
-    private readonly Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo?> _convertToFrameworkMethod;
+    private readonly Func<MethodMappingInfo, bool> _canMap;
+    private readonly Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo> _convertToFrameworkMethod;
     private readonly Lazy<ISqlExpressionFactory> _sqlExpressionFactory;
     private readonly Lazy<IMethodCallTranslatorProvider> _methodCallTranslatorProvider;
     private readonly Lazy<IModel> _model;
 
     public PassthroughMethodCallTranslator(
-        Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo?> convertToFrameworkMethod,
+        Func<MethodMappingInfo,bool> canMap,
+        Func<MethodMappingInfo, ConvertToFrameworkMethodContext, MethodMappingInfo> convertToFrameworkMethod,
         Func<ISqlExpressionFactory> initializeSqlExpressionFactory,
         Func<IMethodCallTranslatorProvider> initializeMethodCallTranslatorProvider,
         Func<IModel> initializeModel)
     {
+        _canMap = canMap;
         _convertToFrameworkMethod = convertToFrameworkMethod;
         _sqlExpressionFactory = new(initializeSqlExpressionFactory);
         _methodCallTranslatorProvider = new(initializeMethodCallTranslatorProvider);
@@ -25,10 +28,12 @@ internal class PassthroughMethodCallTranslator : IMethodCallTranslator
         IReadOnlyList<SqlExpression> arguments,
         IDiagnosticsLogger<DbLoggerCategory.Query> logger)
     {
-        var context = new ConvertToFrameworkMethodContext(Convert, ConvertToFramework, Constant);
-        var frameworkMethodMappingInfo = _convertToFrameworkMethod(new MethodMappingInfo(instance, method, arguments), context);
+        var mappingInfo = new MethodMappingInfo(instance, method, arguments);
 
-        if (frameworkMethodMappingInfo == null) return null;
+        if (!_canMap(mappingInfo)) return null;
+
+        var context = new ConvertToFrameworkMethodContext(Convert, ConvertToFramework, Constant);
+        var frameworkMethodMappingInfo = _convertToFrameworkMethod(mappingInfo, context);
 
         var translateExpression = _methodCallTranslatorProvider.Value.Translate(
             _model.Value,
@@ -37,7 +42,8 @@ internal class PassthroughMethodCallTranslator : IMethodCallTranslator
             frameworkMethodMappingInfo.Arguments.Cast<SqlExpression>().ToArray(),
             logger);
 
-        if (translateExpression == null) return null;
+        if (translateExpression == null)
+            throw new InvalidOperationException("Failed to find mapped method.");
 
         return (SqlExpression)Convert(translateExpression, method.ReturnType);
     }
