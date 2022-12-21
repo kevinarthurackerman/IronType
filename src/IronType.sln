@@ -15,13 +15,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.Examples.BlazorWas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.EntityFramework.Relational", "IronType.EntityFramework.Relational\IronType.EntityFramework.Relational.csproj", "{A929E186-F4B7-4F0F-9ED4-3A2CC44824EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronType.DependencyInjection", "IronType.DependencyInjection\IronType.DependencyInjection.csproj", "{62EB66F4-302A-4404-AA56-CBC1028B108D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.DependencyInjection", "IronType.DependencyInjection\IronType.DependencyInjection.csproj", "{62EB66F4-302A-4404-AA56-CBC1028B108D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronType.NodaTime", "IronType.NodaTime\IronType.NodaTime.csproj", "{4606C364-33E5-4097-BEAF-16D1DDF1AA3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.NodaTime", "IronType.NodaTime\IronType.NodaTime.csproj", "{4606C364-33E5-4097-BEAF-16D1DDF1AA3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronType.Json", "IronType.Json\IronType.Json.csproj", "{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronType.Json.DependencyInjection", "IronType.Json.DependencyInjection\IronType.Json.DependencyInjection.csproj", "{EC194DCF-4C12-403C-83B5-21C63603A261}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.Json", "IronType.Json\IronType.Json.csproj", "{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -65,10 +63,6 @@ Global
 		{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EC194DCF-4C12-403C-83B5-21C63603A261}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EC194DCF-4C12-403C-83B5-21C63603A261}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EC194DCF-4C12-403C-83B5-21C63603A261}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EC194DCF-4C12-403C-83B5-21C63603A261}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
