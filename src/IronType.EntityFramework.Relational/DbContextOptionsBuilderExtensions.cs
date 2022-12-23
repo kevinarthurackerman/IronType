@@ -12,10 +12,10 @@ public static class DbContextOptionsBuilderExtensions
         var ironTypeConfiguration = config.IronTypeConfiguration;
         if (ironTypeConfiguration == null)
         {
-            var coreOpts = optionsBuilder.Options.FindExtension<CoreOptionsExtension>()!;
+            var coreOpts = optionsBuilder.Options.FindExtension<CoreOptionsExtension>();
 
-            ironTypeConfiguration = coreOpts.InternalServiceProvider?.GetService<IronTypeConfiguration>()
-                ?? coreOpts.ApplicationServiceProvider?.GetService<IronTypeConfiguration>();
+            ironTypeConfiguration = coreOpts?.InternalServiceProvider?.GetService<IronTypeConfiguration>()
+                ?? coreOpts?.ApplicationServiceProvider?.GetService<IronTypeConfiguration>();
         }
 
         ironTypeConfiguration ??= IronTypeConfiguration.Global;
