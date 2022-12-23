@@ -18,16 +18,19 @@ public static class JsonSerializerOptionsExtensions
                     .GetMethod(nameof(CreateJsonConverter), BindingFlags.NonPublic | BindingFlags.Static)!;
 
         var converters = ironTypeConfiguration.TypeMappings
-            .Where(x => frameworkTypesLookup.Contains(x.FrameworkType))
+            .Where(IsFrameworkTypeMapping)
             .GroupBy(x => x.AppType)
             .Select(x => x.Last())
             .Select(InstantiateJsonConverter)
             .ToArray();
-
+        
         foreach (var converter in converters)
             jsonSerializerOptions.Converters.Add(converter);
 
         return jsonSerializerOptions;
+
+        bool IsFrameworkTypeMapping(ITypeMapping typeMapping)
+            => frameworkTypesLookup.Contains(typeMapping.FrameworkType);
 
         JsonConverter InstantiateJsonConverter(ITypeMapping typeMapping)
             => (JsonConverter)createJsonConverterMethod
