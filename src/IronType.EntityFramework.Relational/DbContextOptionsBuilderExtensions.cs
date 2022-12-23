@@ -2,11 +2,12 @@
 
 public static class DbContextOptionsBuilderExtensions
 {
-    public static TOptionsBuilder UseIronType<TOptionsBuilder>(this TOptionsBuilder optionsBuilder, Action<UseIronTypeConfiguration>? configure = null)
+    public static TOptionsBuilder UseIronType<TOptionsBuilder>(this TOptionsBuilder optionsBuilder, Func<UseIronTypeConfiguration, UseIronTypeConfiguration>? configure = null)
         where TOptionsBuilder : DbContextOptionsBuilder
     {
         var config = new UseIronTypeConfiguration();
-        configure?.Invoke(config);
+        if (configure != null)
+            config = configure.Invoke(config);
 
         var ironTypeConfiguration = config.IronTypeConfiguration;
         if (ironTypeConfiguration == null)
@@ -28,9 +29,7 @@ public static class DbContextOptionsBuilderExtensions
 
 public class UseIronTypeConfiguration
 {
-    public IronTypeConfiguration? IronTypeConfiguration { get; set; }
-
-    public IList<Type> FrameworkTypes { get; } = new List<Type>
+    private static readonly IImmutableList<Type> _defaultFrameworkTypes = new []
         {
             typeof(bool),
             typeof(bool?),
@@ -59,5 +58,9 @@ public class UseIronTypeConfiguration
             typeof(string),
             typeof(TimeSpan),
             typeof(TimeSpan?)
-        };
+        }.ToImmutableList();
+
+    public IronTypeConfiguration? IronTypeConfiguration { get; init; }
+
+    public IImmutableList<Type> FrameworkTypes { get; init; } = _defaultFrameworkTypes;
 }

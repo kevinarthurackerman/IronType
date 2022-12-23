@@ -11,20 +11,25 @@ public class IronTypeRelationalTypeMappingSourcePlugin : IRelationalTypeMappingS
     {
         var frameworkTypesLookup = frameworkTypes.ToImmutableHashSet();
 
-        _relationalTypeMappingLookupByType = ironTypeConfiguration.TypeMapping
-            .Where(x => frameworkTypesLookup.Contains(x.FrameworkType))
+        _relationalTypeMappingLookupByType = ironTypeConfiguration.TypeMappings
+            .Where(IsFrameworkTypeMapping)
             .GroupBy(x => x.AppType)
             .Select(x => x.Last())
-            .Select(x =>
-            {
-                var initializeFunc = () => (RelationalTypeMapping)typeof(IronTypeRelationalTypeMappingSourcePlugin)
-                    .GetMethod(nameof(CreateTypeMapping), BindingFlags.NonPublic | BindingFlags.Static)!
-                    .MakeGenericMethod(x.AppType, x.FrameworkType)
-                    .Invoke(null, new object?[] { x, serviceProvider })!;
-
-                return (RelationalTypeMapping)new LazyInitializedRelationalTypeMapping(x.AppType, initializeFunc);
-            })
+            .Select(InstantiateRelationalTypeMapping)
             .ToImmutableDictionary(x => x.ClrType);
+
+        bool IsFrameworkTypeMapping(ITypeMapping typeMapping)
+            => frameworkTypesLookup.Contains(typeMapping.FrameworkType);
+
+        RelationalTypeMapping InstantiateRelationalTypeMapping(ITypeMapping typeMapping)
+        {
+            var initializeFunc = () => (RelationalTypeMapping)typeof(IronTypeRelationalTypeMappingSourcePlugin)
+                .GetMethod(nameof(CreateTypeMapping), BindingFlags.NonPublic | BindingFlags.Static)!
+                .MakeGenericMethod(typeMapping.AppType, typeMapping.FrameworkType)
+                .Invoke(null, new object?[] { typeMapping, serviceProvider })!;
+
+            return (RelationalTypeMapping)new LazyInitializedRelationalTypeMapping(typeMapping.AppType, initializeFunc);
+        }
     }
 
     public RelationalTypeMapping? FindMapping(in RelationalTypeMappingInfo mappingInfo)

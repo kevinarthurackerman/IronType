@@ -2,27 +2,29 @@
 
 public static class IronTypeConfigurationBuilderExtensions
 {
-    public static IronTypeConfigurationBuilder AddUnitsNet(this IronTypeConfigurationBuilder ironTypeConfigurationBuilder)
+    public static IronTypeConfiguration WithUnitsNet(this IronTypeConfiguration ironTypeConfiguration)
     {
         var quantityTypes = typeof(IQuantity).Assembly.GetTypes()
-            .Where(x => !x.IsClass
-                && x.GetInterfaces().Any(y => y.IsGenericType
-                    && y.GetGenericTypeDefinition() == typeof(IQuantity<>)))
+            .Where(IsQuantityType)
             .ToArray();
 
         var createTypeMappingMethod = typeof(IronTypeConfigurationBuilderExtensions)
             .GetMethod(nameof(IronTypeConfigurationBuilderExtensions.CreateTypeMapping), BindingFlags.NonPublic | BindingFlags.Static)!;
 
-        foreach (var quantityType in quantityTypes)
-        {
-            var typeMapping = (ITypeMapping)createTypeMappingMethod
+        var typeMappings = quantityTypes
+            .Select(CreateTypeMapping)
+            .ToArray();
+
+        return ironTypeConfiguration.WithTypeMappings(typeMappings);
+
+        static bool IsQuantityType(Type type)
+            => !type.IsClass
+                && type.GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IQuantity<>));
+
+        ITypeMapping CreateTypeMapping(Type quantityType)
+            => (ITypeMapping)createTypeMappingMethod!
                 .MakeGenericMethod(quantityType)
                 .Invoke(null, Array.Empty<object>())!;
-
-            ironTypeConfigurationBuilder.AddTypeMapping(typeMapping);
-        }
-
-        return ironTypeConfigurationBuilder;
     }
 
     private static TypeMapping<TQuantity, double> CreateTypeMapping<TQuantity>()

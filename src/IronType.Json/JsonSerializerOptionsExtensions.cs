@@ -2,10 +2,11 @@
 
 public static class JsonSerializerOptionsExtensions
 {
-    public static JsonSerializerOptions UseIronType(this JsonSerializerOptions jsonSerializerOptions, Action<UseIronTypeConfiguration>? configure = null)
+    public static JsonSerializerOptions UseIronType(this JsonSerializerOptions jsonSerializerOptions, Func<UseIronTypeConfiguration, UseIronTypeConfiguration>? configure = null)
     {
         var config = new UseIronTypeConfiguration();
-        configure?.Invoke(config);
+        if (configure != null)
+            config = configure.Invoke(config);
 
         var frameworkTypesLookup = config.FrameworkTypes.ToImmutableHashSet();
 
@@ -13,23 +14,25 @@ public static class JsonSerializerOptionsExtensions
 
         ironTypeConfiguration ??= IronTypeConfiguration.Global;
 
-        var converters = ironTypeConfiguration.TypeMapping
+        var createJsonConverterMethod = typeof(JsonSerializerOptionsExtensions)
+                    .GetMethod(nameof(CreateJsonConverter), BindingFlags.NonPublic | BindingFlags.Static)!;
+
+        var converters = ironTypeConfiguration.TypeMappings
             .Where(x => frameworkTypesLookup.Contains(x.FrameworkType))
             .GroupBy(x => x.AppType)
             .Select(x => x.Last())
-            .Select(x =>
-            {
-                return (JsonConverter)typeof(JsonSerializerOptionsExtensions)
-                    .GetMethod(nameof(CreateJsonConverter), BindingFlags.NonPublic | BindingFlags.Static)!
-                    .MakeGenericMethod(x.AppType, x.FrameworkType)
-                    .Invoke(null, new object?[] { x })!;
-            })
+            .Select(InstantiateJsonConverter)
             .ToArray();
 
         foreach (var converter in converters)
             jsonSerializerOptions.Converters.Add(converter);
 
         return jsonSerializerOptions;
+
+        JsonConverter InstantiateJsonConverter(ITypeMapping typeMapping)
+            => (JsonConverter)createJsonConverterMethod
+                .MakeGenericMethod(typeMapping.AppType, typeMapping.FrameworkType)
+                .Invoke(null, new object?[] { typeMapping })!;
     }
 
     private static JsonConverter CreateJsonConverter<TApp, TFramework>(TypeMapping<TApp, TFramework> typeMapping)
@@ -38,9 +41,7 @@ public static class JsonSerializerOptionsExtensions
 
 public class UseIronTypeConfiguration
 {
-    public IronTypeConfiguration? IronTypeConfiguration { get; set; }
-
-    public IList<Type> FrameworkTypes { get; } = new List<Type>
+    private static readonly IImmutableList<Type> _defaultFrameworkTypes = new[]
         {
             typeof(bool),
             typeof(bool?),
@@ -74,5 +75,9 @@ public class UseIronTypeConfiguration
             typeof(ulong?),
             typeof(ushort),
             typeof(ushort?)
-        };
+        }.ToImmutableList();
+
+    public IronTypeConfiguration? IronTypeConfiguration { get; init; }
+
+    public IImmutableList<Type> FrameworkTypes { get; init; } = _defaultFrameworkTypes;
 }

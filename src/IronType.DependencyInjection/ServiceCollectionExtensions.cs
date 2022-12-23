@@ -2,12 +2,13 @@
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddIronType(this IServiceCollection serviceCollection, Action<IronTypeConfigurationBuilder>? configure = null)
+    public static IServiceCollection AddIronType(this IServiceCollection serviceCollection, Func<IronTypeConfiguration, IronTypeConfiguration>? configure = null)
     {
-        var config = new IronTypeConfigurationBuilder();
-        configure?.Invoke(config);
+        var config = new IronTypeConfiguration();
+        if (configure != null)
+            config = configure.Invoke(config);
 
-        serviceCollection.AddSingleton(config.Build());
+        serviceCollection.AddSingleton(config);
 
         return serviceCollection;
     }
