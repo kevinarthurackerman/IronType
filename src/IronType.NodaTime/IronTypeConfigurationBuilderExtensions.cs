@@ -34,4 +34,28 @@ public static class IronTypeConfigurationBuilderExtensions
 
         return ironTypeConfiguration.WithTypeMappings(typeMappings);
     }
+
+    public static IronTypeConfiguration WithoutNodaTime(this IronTypeConfiguration ironTypeConfiguration)
+    {
+        var nodaTimeTypeMappings = ironTypeConfiguration.TypeMappings
+            .Where(IsNodaTimeTypeMapping)
+            .ToArray();
+
+        return ironTypeConfiguration.WithoutTypeMappings(nodaTimeTypeMappings);
+
+        static bool IsNodaTimeTypeMapping(ITypeMapping typeMapping)
+        {
+            var type = typeMapping.GetType();
+
+            while (type != null)
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(NodaTimeTypeMapping<,>))
+                    return true;
+
+                type = type.BaseType;
+            }
+
+            return false;
+        }
+    }
 }

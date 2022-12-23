@@ -27,6 +27,30 @@ public static class IronTypeConfigurationBuilderExtensions
                 .Invoke(null, Array.Empty<object>())!;
     }
 
+    public static IronTypeConfiguration WithoutUnitsNet(this IronTypeConfiguration ironTypeConfiguration)
+    {
+        var unitsNetTypeMappings = ironTypeConfiguration.TypeMappings
+            .Where(IsUnitsNetTypeMapping)
+            .ToArray();
+
+        return ironTypeConfiguration.WithoutTypeMappings(unitsNetTypeMappings);
+
+        static bool IsUnitsNetTypeMapping(ITypeMapping typeMapping)
+        {
+            var type = typeMapping.GetType();
+
+            while (type != null)
+            {
+                if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(UnitsNetTypeMapping<,>))
+                    return true;
+
+                type = type.BaseType;
+            }
+
+            return false;
+        }
+    }
+
     private static TypeMapping<TQuantity, double> CreateTypeMapping<TQuantity>()
         where TQuantity : IQuantity
     {
@@ -39,7 +63,7 @@ public static class IronTypeConfigurationBuilderExtensions
         var convertToFrameworkValue = CreateConvertToFrameworkValueFunc(baseUnit);
         var convertToAppValue = CreateConvertToAppValueFunc(baseUnit);
 
-        return new TypeMapping<TQuantity, double>(convertToFrameworkValue, convertToAppValue);
+        return new UnitsNetTypeMapping<TQuantity, double>(convertToFrameworkValue, convertToAppValue);
 
         static Func<TQuantity, double> CreateConvertToFrameworkValueFunc(Enum baseUnit)
         {
