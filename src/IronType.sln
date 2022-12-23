@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.NodaTime", "IronTy
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.Json", "IronType.Json\IronType.Json.csproj", "{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.UnitsNet", "IronType.UnitsNet\IronType.UnitsNet.csproj", "{6D584E49-70A5-4157-BF57-F5E8BDCBB741}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -63,6 +65,10 @@ Global
 		{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B656A7C-F9FD-4161-9226-DC5525EFE3E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D584E49-70A5-4157-BF57-F5E8BDCBB741}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D584E49-70A5-4157-BF57-F5E8BDCBB741}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D584E49-70A5-4157-BF57-F5E8BDCBB741}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D584E49-70A5-4157-BF57-F5E8BDCBB741}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

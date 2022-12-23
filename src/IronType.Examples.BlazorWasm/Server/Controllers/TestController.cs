@@ -22,22 +22,28 @@ namespace IronType.Examples.BlazorWasm.Server.Controllers
             {
                 Id = new OrderId(Guid.NewGuid()),
                 OrderedOn = LocalDate.FromDateTime(DateTime.Now),
-                CustomerName = "John Doe"
+                CustomerName = "John Doe",
+                Length = Length.FromMeters(1),
+                Width = Length.FromFeet(1),
+                Height = Length.FromHands(20),
+                Weight = Mass.FromTonnes(0.5)
             };
 
             _dbContext.Add(order);
-
+            
             _dbContext.SaveChanges();
 
-            var now = LocalDate.FromDateTime(DateTime.Now);
-            var gt = _dbContext.Orders.Where(x => x.OrderedOn.PlusDays(1) > now).FirstOrDefault();
-            var gte = _dbContext.Orders.Where(x => x.OrderedOn.PlusDays(1) >= now).FirstOrDefault();
-            var eq = _dbContext.Orders.Where(x => x.OrderedOn.PlusDays(1) == now).FirstOrDefault();
-            var lte = _dbContext.Orders.Where(x => x.OrderedOn.PlusDays(1) <= now).FirstOrDefault();
-            var lt = _dbContext.Orders.Where(x => x.OrderedOn.PlusDays(1) < now).FirstOrDefault();
+            _dbContext.ChangeTracker.Clear();
+            
+            var today = LocalDate.FromDateTime(DateTime.Now);
+            var gt = _dbContext.Orders.Where(x => x.OrderedOn > today).FirstOrDefault();
+            var gte = _dbContext.Orders.Where(x => x.OrderedOn >= today).FirstOrDefault();
+            var eq = _dbContext.Orders.Where(x => x.OrderedOn == today).FirstOrDefault();
+            var lte = _dbContext.Orders.Where(x => x.OrderedOn <= today).FirstOrDefault();
+            var lt = _dbContext.Orders.Where(x => x.OrderedOn < today).FirstOrDefault();
 
             var date = _dbContext.Orders
-                .Select(x => x.OrderedOn.PlusDays(1))
+                .Select(x => x.OrderedOn)
                 .FirstOrDefault();
 
             var persistedOrder = _dbContext.Orders.FirstOrDefault();

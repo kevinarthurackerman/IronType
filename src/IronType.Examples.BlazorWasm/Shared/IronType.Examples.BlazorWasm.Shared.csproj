@@ -14,6 +14,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\IronType.DependencyInjection\IronType.DependencyInjection.csproj" />
     <ProjectReference Include="..\..\IronType.NodaTime\IronType.NodaTime.csproj" />
+    <ProjectReference Include="..\..\IronType.UnitsNet\IronType.UnitsNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>

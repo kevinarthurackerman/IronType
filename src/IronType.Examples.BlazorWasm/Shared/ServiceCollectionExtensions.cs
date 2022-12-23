@@ -6,6 +6,7 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddIronType(x => 
             x.SetGlobal()
+            .AddUnitsNet()
             .AddNodaTime()
             .AddTypeMapping(SimpleTypeMappingFactory.Create<OrderId, Guid>()));
 

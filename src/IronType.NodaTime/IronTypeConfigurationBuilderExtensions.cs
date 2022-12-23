@@ -9,6 +9,7 @@ public static class IronTypeConfigurationBuilderExtensions
         var localDateTimePattern = LocalDateTimePattern.GeneralIso;
         var localDatePattern = LocalDatePattern.Iso;
         var localTimePattern = LocalTimePattern.GeneralIso;
+        var periodPattern = PeriodPattern.NormalizingIso;
 
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<ZonedDateTime, string>(x => zonedDateTimePattern.Format(x), x => zonedDateTimePattern.Parse(x).Value));
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<ZonedDateTime, DateTimeOffset>(x => x.ToDateTimeOffset(), x => ZonedDateTime.FromDateTimeOffset(x)));
@@ -24,9 +25,14 @@ public static class IronTypeConfigurationBuilderExtensions
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalDate, DateOnly>(x => x.ToDateOnly(), x => LocalDate.FromDateOnly(x)));
 
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, string>(x => localTimePattern.Format(x), x => localTimePattern.Parse(x).Value));
-        ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, DateTime>(x => new DateTime(1900, 1, 1).Add(x.ToTimeOnly().ToTimeSpan()), x => LocalTime.FromTimeOnly(TimeOnly.FromDateTime(x))));
+        ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, DateTime>(x => new DateTime(1900, 1, 1).AddTicks(x.TickOfDay), x => LocalTime.FromTicksSinceMidnight(x.TimeOfDay.Ticks)));
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, TimeSpan>(x => x.ToTimeOnly().ToTimeSpan(), x => LocalTime.FromTimeOnly(TimeOnly.FromTimeSpan(x))));
         ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<LocalTime, TimeOnly>(x => x.ToTimeOnly(), x => LocalTime.FromTimeOnly(x)));
+
+        ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<Period, string>(x => periodPattern.Format(x), x => periodPattern.Parse(x).Value));
+        ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<Period, DateTime>(x => new DateTime(1900, 1, 1).AddTicks(x.Ticks), x => Period.FromTicks(x.TimeOfDay.Ticks)));
+        ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<Period, TimeSpan>(x => TimeSpan.FromTicks(x.Ticks), x => Period.FromTicks(x.Ticks)));
+        ironTypeConfigurationBuilder.AddTypeMapping(new TypeMapping<Period, TimeOnly>(x => new TimeOnly(x.Ticks), x => Period.FromTicks(x.Ticks)));
 
         return ironTypeConfigurationBuilder;
     }

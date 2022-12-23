@@ -7,3 +7,4 @@ global using Microsoft.EntityFrameworkCore;
 global using NodaTime;
 global using System.Data;
 global using System.Text.Json;
+global using UnitsNet;
