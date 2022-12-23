@@ -1,6 +1,6 @@
 ﻿namespace IronType;
 
-public sealed class TypeMapping<TApp, TFramework> : ITypeMapping
+public class TypeMapping<TApp, TFramework> : ITypeMapping
 {
     private readonly Func<TApp, TFramework> _convertToFrameworkValue;
     private readonly Func<TFramework, TApp> _convertToAppValue;
