@@ -1,16 +1,12 @@
 ﻿namespace IronType;
 
-public static class SimpleTypeMappingFactory
+public class SimpleTypeMapping<TApp, TFramework> : TypeMapping<TApp, TFramework>
 {
-    public static ITypeMapping Create<TApp, TFramework>()
-    {
-        var convertToAppValue = CreateConverter<TApp, TFramework>();
-        var convertToFrameworkValue = CreateConverter<TFramework, TApp>();
+    public SimpleTypeMapping()
+        : base(CreateConverter<TFramework, TApp>(), CreateConverter<TApp, TFramework>())
+        { }
 
-        return new TypeMapping<TApp, TFramework>(convertToFrameworkValue, convertToAppValue);
-    }
-
-    public static Func<TFrom, TTo> CreateConverter<TTo, TFrom>()
+    private static Func<TFrom, TTo> CreateConverter<TTo, TFrom>()
     {
         var ctors = typeof(TTo).GetConstructors();
 

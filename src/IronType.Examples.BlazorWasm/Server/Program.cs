@@ -4,6 +4,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSharedServices();
 
+builder.Services.ConfigureIronType(x => x.WithAssemblyTypeMappings(typeof(Program).Assembly));
+
 builder.Services.AddDbContext<AppDbContext>(x =>
 {
     x.UseIronType();

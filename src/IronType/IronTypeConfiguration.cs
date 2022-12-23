@@ -44,4 +44,29 @@ public static class IronTypeConfigurationExtensions
 
     public static IronTypeConfiguration WithoutTypeMappings(this IronTypeConfiguration ironTypeConfiguration, IEnumerable<ITypeMapping> typeMappings)
         => new() { TypeMappings = ironTypeConfiguration.TypeMappings.RemoveRange(typeMappings) };
+
+    public static IronTypeConfiguration WithAssemblyTypeMappings(this IronTypeConfiguration ironTypeConfiguration, Assembly assembly, Func<Type,object?>? typeMappingActivator = null)
+    {
+        typeMappingActivator ??= (Type type) => Activator.CreateInstance(type);
+
+        var typeMappings = assembly.GetTypes()
+            .Where(x => typeof(ITypeMapping).IsAssignableFrom(x))
+            .Select(InstanciateTypeMapping)
+            .ToArray();
+
+        return new () { TypeMappings = ironTypeConfiguration.TypeMappings.AddRange(typeMappings) };
+
+        ITypeMapping InstanciateTypeMapping(Type type)
+        {
+            var typeMapping = typeMappingActivator.Invoke(type);
+
+            if (typeMapping == null)
+                throw new InvalidOperationException($"Failed to activate Type '{type}'.");
+
+            if (typeMapping is not ITypeMapping typedTypeMapping)
+                throw new InvalidOperationException($"Type '{type}' does not implement '{typeof(ITypeMapping)}'.");
+
+            return typedTypeMapping;
+        }
+    }
 }

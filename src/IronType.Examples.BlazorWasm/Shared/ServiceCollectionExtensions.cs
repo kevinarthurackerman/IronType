@@ -6,9 +6,10 @@ public static class ServiceCollectionExtensions
     {
         serviceCollection.AddIronType(x =>
         {
-            var config = x.WithUnitsNet()
+            var config = x
+                .WithUnitsNet()
                 .WithNodaTime()
-                .WithTypeMapping(SimpleTypeMappingFactory.Create<OrderId, Guid>());
+                .WithAssemblyTypeMappings(typeof(ServiceCollectionExtensions).Assembly);
 
             IronTypeConfiguration.Global = config;
 
