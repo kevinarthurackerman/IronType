@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Builder;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -38,7 +40,13 @@ app.UseRouting();
 app.UseCors(x => x.AllowAnyOrigin()
     .AllowAnyMethod()
     .AllowAnyHeader());
-
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    db.Database.EnsureCreated();
+}
 
 app.Run();
