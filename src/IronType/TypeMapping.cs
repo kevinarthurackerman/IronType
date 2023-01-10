@@ -1,6 +1,6 @@
 ﻿namespace IronType;
 
-public class TypeMapping<TApp, TFramework> : ITypeMapping
+public class TypeMapping<TApp, TFramework> : ITypeMapping<TApp, TFramework>
 {
     private readonly Func<TApp, TFramework> _convertToFrameworkValue;
     private readonly Func<TFramework, TApp> _convertToAppValue;
@@ -21,7 +21,7 @@ public class TypeMapping<TApp, TFramework> : ITypeMapping
     public TApp ConvertToAppValue(TFramework frameworkValue)
         => _convertToAppValue(frameworkValue);
 
-    public object? ConvertToFrameworkValue(object? appValue)
+    object? ITypeMapping.ConvertToFrameworkValue(object? appValue)
     {
         if (appValue is TApp typedAppValue)
             return _convertToFrameworkValue(typedAppValue);
@@ -29,13 +29,20 @@ public class TypeMapping<TApp, TFramework> : ITypeMapping
         throw new ArgumentException($"'{nameof(appValue)}' must be of type '{typeof(TApp)}'.");
     }
 
-    public object? ConvertToAppValue(object? frameworkValue)
+    object? ITypeMapping.ConvertToAppValue(object? frameworkValue)
     {
         if (frameworkValue is TFramework typedAppValue)
             return _convertToAppValue(typedAppValue);
 
         throw new ArgumentException($"'{nameof(frameworkValue)}' must be of type '{typeof(TFramework)}'.");
     }
+}
+
+public interface ITypeMapping<TApp, TFramework> : ITypeMapping
+{
+    public TFramework ConvertToFrameworkValue(TApp appValue);
+
+    public TApp ConvertToAppValue(TFramework frameworkValue);
 }
 
 public interface ITypeMapping
