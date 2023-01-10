@@ -33,3 +33,6 @@ public class SimpleTypeMapping<TApp, TFramework> : TypeMapping<TApp, TFramework>
         throw new InvalidOperationException($"No supported conversion from '{typeof(TFrom)}' to '{typeof(TTo)}' found. Supported conversions are a single public constructor on '{typeof(TTo)}' that takes a single parameter '{typeof(TFrom)}', or a single property on '{typeof(TFrom)}' that returns a value of '{typeof(TTo)}'.");
     }
 }
+
+[AttributeUsage(AttributeTargets.Struct | AttributeTargets.Class)]
+public class SimpleTypeMappingAttribute : Attribute { }

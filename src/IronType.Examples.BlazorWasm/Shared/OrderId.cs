@@ -1,5 +1,4 @@
 ﻿namespace IronType.Examples.BlazorWasm.Shared;
 
+[SimpleTypeMapping]
 public readonly record struct OrderId(Guid Value);
-
-public class OrderIdTypeMapping : SimpleTypeMapping<OrderId, Guid> { }

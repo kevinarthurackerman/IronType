@@ -49,8 +49,35 @@ public static class IronTypeConfigurationExtensions
     {
         typeMappingActivator ??= (Type type) => Activator.CreateInstance(type);
 
-        var typeMappings = assembly.GetTypes()
-            .Where(x => typeof(ITypeMapping).IsAssignableFrom(x))
+        var assemblyTypemappings = assembly.GetTypes()
+            .Where(x => typeof(ITypeMapping).IsAssignableFrom(x));
+
+        var simpleMappedTypes = assembly.GetTypes()
+            .Where(x => x.GetCustomAttribute<SimpleTypeMappingAttribute>() != null)
+            .Select(x =>
+            {
+                var appType = x;
+
+                var ctors = x.GetConstructors();
+
+                if (ctors.Length == 1)
+                {
+                    var ctor = ctors[0];
+                    var @params = ctor.GetParameters();
+
+                    if (@params.Length == 1)
+                    {
+                        var frameworkType = @params[0].ParameterType;
+
+                        return typeof(SimpleTypeMapping<,>).MakeGenericType(appType, frameworkType);
+                    }
+                }
+
+                throw new InvalidOperationException($"'{appType}' is not valid as a simple mapped type. Simple mapped types must have a single constructor that takes a single parameter.");
+            });
+
+        var typeMappings = assemblyTypemappings
+            .Concat(simpleMappedTypes)
             .Select(InstanciateTypeMapping)
             .ToArray();
 
