@@ -2,7 +2,7 @@
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddSharedServices(this IServiceCollection serviceCollection)
+    public static IServiceCollection AddIronTypeCore(this IServiceCollection serviceCollection, Func<IronTypeConfiguration, IronTypeConfiguration> configure)
     {
         serviceCollection.AddIronType(x =>
         {
@@ -10,6 +10,8 @@ public static class ServiceCollectionExtensions
                 .WithUnitsNet()
                 .WithNodaTime()
                 .WithAssemblyTypeMappings(typeof(ServiceCollectionExtensions).Assembly);
+
+            config = configure(config);
 
             IronTypeConfiguration.Global = config;
 

@@ -1,12 +1,8 @@
-using Microsoft.AspNetCore.Builder;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddSharedServices();
-
-builder.Services.ConfigureIronType(x => x.WithAssemblyTypeMappings(typeof(Program).Assembly));
+builder.Services.AddIronTypeCore(x => x.WithAssemblyTypeMappings(typeof(Program).Assembly));
 
 builder.Services.AddDbContext<AppDbContext>(x =>
 {
