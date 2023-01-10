@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection.Extensions;
-
-namespace IronType.DependencyInjection;
+﻿namespace IronType.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {

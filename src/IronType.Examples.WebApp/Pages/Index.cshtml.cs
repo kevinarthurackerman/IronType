@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
-
-namespace IronType.Examples.WebApp.Pages
+﻿namespace IronType.Examples.WebApp.Pages
 {
     public class IndexModel : PageModel
     {

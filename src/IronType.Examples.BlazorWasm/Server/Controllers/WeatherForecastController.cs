@@ -1,6 +1,3 @@
-using IronType.Examples.BlazorWasm.Shared;
-using Microsoft.AspNetCore.Mvc;
-
 namespace IronType.Examples.BlazorWasm.Server.Controllers
 {
     [ApiController]

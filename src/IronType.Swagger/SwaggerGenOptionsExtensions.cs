@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-
-namespace IronType.Swagger;
+﻿namespace IronType.Swagger;
 
 public static class SwaggerGenOptionsExtensions
 {
