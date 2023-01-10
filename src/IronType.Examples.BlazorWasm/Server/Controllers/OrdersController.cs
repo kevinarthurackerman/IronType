@@ -12,16 +12,23 @@ namespace IronType.Examples.BlazorWasm.Server.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<OrderViewModel> Get()
+        public IEnumerable<OrderViewModel> Get(LocalDate? from, LocalDate? to)
         {
-            return _dbContext.Orders
+            var orders = _dbContext.Orders
+                .Where(x => from == null || x.OrderedOn >= from && to == null || x.OrderedOn <= to)
                 .Select(x => new OrderViewModel
                 {
                     Id = x.Id,
                     OrderedOn = x.OrderedOn,
-                    CustomerName = x.CustomerName
+                    CustomerName = x.CustomerName,
+                    Height = x.Height,
+                    Length = x.Length,
+                    Width = x.Width,
+                    Weight = x.Weight
                 })
                 .ToArray();
+
+            return orders;
         }
     }
 }
