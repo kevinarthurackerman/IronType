@@ -11,7 +11,7 @@ builder.Services.AddDbContext<AppDbContext>(x =>
 });
 
 builder.Services.AddControllers()
-    .AddJsonOptions(x => x.JsonSerializerOptions.UseIronType());
+    .AddNewtonsoftJson(x => x.SerializerSettings.UseIronType());
 
 builder.Services.AddSwaggerGen(x => x.UseIronType());
 
@@ -64,9 +64,6 @@ using (var scope = app.Services.CreateScope())
     db.Add(order);
 
     db.SaveChanges();
-
-    var serialized = JsonSerializer.Serialize(order, jsonOpts.Value.JsonSerializerOptions);
-    var deserialized = JsonSerializer.Deserialize<Order>(serialized, jsonOpts.Value.JsonSerializerOptions);
 }
 
 app.Run();

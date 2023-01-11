@@ -2,7 +2,7 @@
 global using IronType.EntityFramework.Relational;
 global using IronType.Examples.BlazorWasm.Server.Data;
 global using IronType.Examples.BlazorWasm.Shared;
-global using IronType.Json;
+global using IronType.NewtonsoftJson;
 global using IronType.Swagger;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.AspNetCore.Mvc.RazorPages;

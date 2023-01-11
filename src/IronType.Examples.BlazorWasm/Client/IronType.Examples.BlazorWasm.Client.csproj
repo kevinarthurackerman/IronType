@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IronType.Json\IronType.Json.csproj" />
+    <ProjectReference Include="..\..\IronType.SystemTextJson\IronType.SystemTextJson.csproj" />
     <ProjectReference Include="..\Shared\IronType.Examples.BlazorWasm.Shared.csproj" />
   </ItemGroup>
 

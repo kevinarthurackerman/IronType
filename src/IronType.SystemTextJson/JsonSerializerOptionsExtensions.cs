@@ -1,4 +1,4 @@
-﻿namespace IronType.Json;
+﻿namespace IronType.SystemTextJson;
 
 public static class JsonSerializerOptionsExtensions
 {

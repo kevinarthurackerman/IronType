@@ -48,10 +48,6 @@ namespace IronType.Examples.BlazorWasm.Server.Controllers
 
             var persistedOrder = _dbContext.Orders.FirstOrDefault();
 
-            var json = JsonSerializer.Serialize(persistedOrder, new JsonSerializerOptions().UseIronType());
-
-            var fromJson = JsonSerializer.Deserialize<Order>(json, new JsonSerializerOptions().UseIronType());
-
             return "success";
         }
     }

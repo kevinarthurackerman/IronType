@@ -1,5 +1,4 @@
 ﻿global using IronType;
-global using IronType.DependencyInjection;
 global using IronType.Examples.BlazorWasm.Client;
 global using IronType.Examples.BlazorWasm.Shared;
 global using Microsoft.AspNetCore.Components.Web;

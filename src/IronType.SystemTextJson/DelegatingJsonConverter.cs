@@ -1,4 +1,4 @@
-﻿namespace IronType.Json;
+﻿namespace IronType.SystemTextJson;
 
 internal class DelegatingJsonConverter<TApp, TFramework> : JsonConverter<TApp>
 {
