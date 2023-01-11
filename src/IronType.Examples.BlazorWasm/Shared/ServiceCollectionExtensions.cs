@@ -9,7 +9,7 @@ public static class ServiceCollectionExtensions
             var config = x
                 .WithUnitsNet()
                 .WithNodaTime()
-                .WithAssemblyTypeMappings(typeof(ServiceCollectionExtensions).Assembly);
+                .WithAssemblyTypeMappings(typeof(ServiceCollectionExtensions));
 
             config = configure(config);
 

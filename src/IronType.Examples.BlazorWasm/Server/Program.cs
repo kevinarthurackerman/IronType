@@ -2,7 +2,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddIronTypeCore(x => x.WithAssemblyTypeMappings(typeof(Program).Assembly));
+builder.Services.AddIronTypeCore(x => x.WithAssemblyTypeMappings(typeof(Program)));
 
 builder.Services.AddDbContext<AppDbContext>(x =>
 {

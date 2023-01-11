@@ -45,14 +45,19 @@ public static class IronTypeConfigurationExtensions
     public static IronTypeConfiguration WithoutTypeMappings(this IronTypeConfiguration ironTypeConfiguration, IEnumerable<ITypeMapping> typeMappings)
         => new() { TypeMappings = ironTypeConfiguration.TypeMappings.RemoveRange(typeMappings) };
 
-    public static IronTypeConfiguration WithAssemblyTypeMappings(this IronTypeConfiguration ironTypeConfiguration, Assembly assembly, Func<Type,object?>? typeMappingActivator = null)
+    public static IronTypeConfiguration WithAssemblyTypeMappings<TAssemblyMarker>(this IronTypeConfiguration ironTypeConfiguration, Func<Type, object?>? typeMappingActivator = null)
+        => ironTypeConfiguration.WithAssemblyTypeMappings(typeof(TAssemblyMarker), typeMappingActivator);
+
+    public static IronTypeConfiguration WithAssemblyTypeMappings(this IronTypeConfiguration ironTypeConfiguration, AssemblySource assemblySource, Func<Type,object?>? typeMappingActivator = null)
     {
         typeMappingActivator ??= (Type type) => Activator.CreateInstance(type);
 
-        var assemblyTypemappings = assembly.GetTypes()
+        var assemblyTypemappings = assemblySource
+            .SelectMany(x => x.GetTypes())
             .Where(x => typeof(ITypeMapping).IsAssignableFrom(x));
 
-        var simpleMappedTypes = assembly.GetTypes()
+        var simpleMappedTypes = assemblySource
+            .SelectMany(x => x.GetTypes())
             .Where(x => x.GetCustomAttribute<SimpleTypeMappingAttribute>() != null)
             .Select(x =>
             {
