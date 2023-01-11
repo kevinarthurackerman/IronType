@@ -9,17 +9,11 @@ public class IronTypeRelationalTypeMappingSourcePlugin : IRelationalTypeMappingS
         IronTypeConfiguration ironTypeConfiguration,
         IEnumerable<Type> frameworkTypes)
     {
-        var frameworkTypesLookup = frameworkTypes.ToImmutableHashSet();
+        var typeMappings = ironTypeConfiguration.GetTypeMappingsForFramework(frameworkTypes);
 
-        _relationalTypeMappingLookupByType = ironTypeConfiguration.TypeMappings
-            .Where(IsFrameworkTypeMapping)
-            .GroupBy(x => x.AppType)
-            .Select(x => x.Last())
+        _relationalTypeMappingLookupByType = typeMappings
             .Select(InstantiateRelationalTypeMapping)
             .ToImmutableDictionary(x => x.ClrType);
-
-        bool IsFrameworkTypeMapping(ITypeMapping typeMapping)
-            => frameworkTypesLookup.Contains(typeMapping.FrameworkType);
 
         RelationalTypeMapping InstantiateRelationalTypeMapping(ITypeMapping typeMapping)
         {
@@ -28,7 +22,7 @@ public class IronTypeRelationalTypeMappingSourcePlugin : IRelationalTypeMappingS
                 .MakeGenericMethod(typeMapping.AppType, typeMapping.FrameworkType)
                 .Invoke(null, new object?[] { typeMapping, serviceProvider })!;
 
-            return (RelationalTypeMapping)new LazyInitializedRelationalTypeMapping(typeMapping.AppType, initializeFunc);
+            return new LazyInitializedRelationalTypeMapping(typeMapping.AppType, initializeFunc);
         }
     }
 

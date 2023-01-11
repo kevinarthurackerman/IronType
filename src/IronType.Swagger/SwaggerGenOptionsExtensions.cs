@@ -8,18 +8,11 @@ public static class SwaggerGenOptionsExtensions
         if (configure != null)
             config = configure.Invoke(config);
 
-        var frameworkTypesLookup = config.FrameworkTypes.ToImmutableHashSet();
-
         var ironTypeConfiguration = config.IronTypeConfiguration;
 
         ironTypeConfiguration ??= IronTypeConfiguration.Global;
 
-        var typeMappings = ironTypeConfiguration.TypeMappings
-            .Where(IsFrameworkTypeMapping)
-            .GroupBy(x => x.AppType)
-            .Select(x => x.Last())
-            .Select(x => x)
-            .ToArray();
+        var typeMappings = ironTypeConfiguration.GetTypeMappingsForFramework(config.FrameworkTypes);
 
         foreach (var typeMapping in typeMappings)
         {
@@ -30,9 +23,6 @@ public static class SwaggerGenOptionsExtensions
         swaggerGenOptions.DocumentFilter<IronTypeDocumentFilter>();
 
         return swaggerGenOptions;
-
-        bool IsFrameworkTypeMapping(ITypeMapping typeMapping)
-            => frameworkTypesLookup.Contains(typeMapping.FrameworkType);
     }
 }
 

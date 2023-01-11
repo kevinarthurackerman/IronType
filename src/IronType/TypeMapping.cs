@@ -20,22 +20,6 @@ public class TypeMapping<TApp, TFramework> : ITypeMapping<TApp, TFramework>
 
     public TApp ConvertToAppValue(TFramework frameworkValue)
         => _convertToAppValue(frameworkValue);
-
-    object? ITypeMapping.ConvertToFrameworkValue(object? appValue)
-    {
-        if (appValue is TApp typedAppValue)
-            return _convertToFrameworkValue(typedAppValue);
-
-        throw new ArgumentException($"'{nameof(appValue)}' must be of type '{typeof(TApp)}'.");
-    }
-
-    object? ITypeMapping.ConvertToAppValue(object? frameworkValue)
-    {
-        if (frameworkValue is TFramework typedAppValue)
-            return _convertToAppValue(typedAppValue);
-
-        throw new ArgumentException($"'{nameof(frameworkValue)}' must be of type '{typeof(TFramework)}'.");
-    }
 }
 
 public interface ITypeMapping<TApp, TFramework> : ITypeMapping
@@ -50,8 +34,4 @@ public interface ITypeMapping
     public Type FrameworkType { get; }
 
     public Type AppType { get; }
-
-    public object? ConvertToFrameworkValue(object? appValue);
-
-    public object? ConvertToAppValue(object? frameworkValue);
 }

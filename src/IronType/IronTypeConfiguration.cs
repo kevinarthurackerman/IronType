@@ -101,4 +101,15 @@ public static class IronTypeConfigurationExtensions
             return typedTypeMapping;
         }
     }
+
+    public static IEnumerable<ITypeMapping> GetTypeMappingsForFramework(this IronTypeConfiguration ironTypeConfiguration, IEnumerable<Type> frameworkTypes)
+    {
+        var frameworkTypesLookup = frameworkTypes.ToImmutableHashSet();
+
+        return ironTypeConfiguration.TypeMappings
+            .Where(x => frameworkTypesLookup.Contains(x.FrameworkType))
+            .GroupBy(x => x.AppType)
+            .Select(x => x.Last())
+            .ToArray();
+    }
 }

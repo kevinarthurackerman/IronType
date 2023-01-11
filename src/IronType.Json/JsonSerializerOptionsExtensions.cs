@@ -8,8 +8,6 @@ public static class JsonSerializerOptionsExtensions
         if (configure != null)
             config = configure.Invoke(config);
 
-        var frameworkTypesLookup = config.FrameworkTypes.ToImmutableHashSet();
-
         var ironTypeConfiguration = config.IronTypeConfiguration;
 
         ironTypeConfiguration ??= IronTypeConfiguration.Global;
@@ -17,10 +15,9 @@ public static class JsonSerializerOptionsExtensions
         var createJsonConverterMethod = typeof(JsonSerializerOptionsExtensions)
                     .GetMethod(nameof(CreateJsonConverter), BindingFlags.NonPublic | BindingFlags.Static)!;
 
-        var converters = ironTypeConfiguration.TypeMappings
-            .Where(IsFrameworkTypeMapping)
-            .GroupBy(x => x.AppType)
-            .Select(x => x.Last())
+        var typeMappings = ironTypeConfiguration.GetTypeMappingsForFramework(config.FrameworkTypes);
+
+        var converters = typeMappings
             .Select(InstantiateJsonConverter)
             .ToArray();
         
@@ -28,9 +25,6 @@ public static class JsonSerializerOptionsExtensions
             jsonSerializerOptions.Converters.Add(converter);
 
         return jsonSerializerOptions;
-
-        bool IsFrameworkTypeMapping(ITypeMapping typeMapping)
-            => frameworkTypesLookup.Contains(typeMapping.FrameworkType);
 
         JsonConverter InstantiateJsonConverter(ITypeMapping typeMapping)
             => (JsonConverter)createJsonConverterMethod
