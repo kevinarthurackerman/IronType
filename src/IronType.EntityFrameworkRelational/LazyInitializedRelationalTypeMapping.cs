@@ -1,4 +1,4 @@
-﻿namespace IronType.EntityFramework.Relational;
+﻿namespace IronType.EntityFrameworkRelational;
 
 internal sealed class LazyInitializedRelationalTypeMapping : RelationalTypeMapping
 {

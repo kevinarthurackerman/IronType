@@ -1,5 +1,5 @@
 ﻿global using IronType;
-global using IronType.EntityFramework.Relational;
+global using IronType.EntityFrameworkRelational;
 global using IronType.Examples.BlazorWasm.Server.Data;
 global using IronType.Examples.BlazorWasm.Shared;
 global using IronType.NewtonsoftJson;

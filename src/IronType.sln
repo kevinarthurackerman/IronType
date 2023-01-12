@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.Examples.BlazorWas
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.Examples.BlazorWasm.Shared", "IronType.Examples.BlazorWasm\Shared\IronType.Examples.BlazorWasm.Shared.csproj", "{F76DBA84-9186-4C4C-A4C2-E888EB46E87F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.EntityFramework.Relational", "IronType.EntityFramework.Relational\IronType.EntityFramework.Relational.csproj", "{A929E186-F4B7-4F0F-9ED4-3A2CC44824EA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.EntityFrameworkRelational", "IronType.EntityFrameworkRelational\IronType.EntityFrameworkRelational.csproj", "{A929E186-F4B7-4F0F-9ED4-3A2CC44824EA}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "IronType.DependencyInjection", "IronType.DependencyInjection\IronType.DependencyInjection.csproj", "{62EB66F4-302A-4404-AA56-CBC1028B108D}"
 EndProject

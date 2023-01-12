@@ -1,4 +1,4 @@
-﻿namespace IronType.EntityFramework.Relational;
+﻿namespace IronType.EntityFrameworkRelational;
 
 public static class DbContextOptionsBuilderExtensions
 {

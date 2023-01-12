@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\IronType.EntityFramework.Relational\IronType.EntityFramework.Relational.csproj" />
+    <ProjectReference Include="..\..\IronType.EntityFrameworkRelational\IronType.EntityFrameworkRelational.csproj" />
     <ProjectReference Include="..\..\IronType.NewtonsoftJson\IronType.NewtonsoftJson.csproj" />
     <ProjectReference Include="..\..\IronType.Swagger\IronType.Swagger.csproj" />
     <ProjectReference Include="..\Shared\IronType.Examples.BlazorWasm.Shared.csproj" />
