@@ -1,67 +1,149 @@
 
 # IronType
 
-The goal of this library is to help avoid [primitive data obsession](https://en.wikipedia.org/wiki/Primitive_data_type) by making it easy to map custom types onto primitive and simple types that are commonly supported by libraries. Additionaly, this can also help avoid lock-in by making it easy to switch libraries and bring your type mappings over with you.
+**A simple library for enabling using custom and imported types throughout the stack.**
 
-**Basic Usage:**
-First, add a reference to IronType and any extension packages you want to consume to your project file.
+The goal of this library is to help avoid [primitive data obsession](https://en.wikipedia.org/wiki/Primitive_data_type) by making it easy to map custom types onto primitive and simple types that are commonly supported by libraries. Additionaly, save time and avoid lock-in by making it easy to import mappings or switch libraries and bring your type mappings over with you.
+
+## Quick Start
+
+First, reference IronType in your project file.
 ```csharp
 <ProjectReference Include="..\IronType\IronType.csproj" />
-<ProjectReference Include="..\IronType.UnitsNet\IronType.UnitsNet.csproj" />
-<ProjectReference Include="..\IronType.NodaTime\IronType.NodaTime.csproj" />
-<ProjectReference Include="..\IronType.Json\IronType.Json.csproj" />
-<ProjectReference Include="..\IronType.Swagger\IronType.Swagger.csproj" />
 ```
 
-Next, configure the type mapping registrations in your service container.
+Next, let's create a custom type and some type mappings.
+
 ```csharp
-services.AddIronType(x =>
-{
-    var config = x
-        .WithUnitsNet() // Adds mappings for types in the UnitsNet package.
-        .WithNodaTime() // Adds mappings for types in the NodaTime package.
-        .WithAssemblyTypeMappings(typeof(AssemblyMarkerType)); // Adds mappings from the assembly containing the marker type.
+public readonly record struct OrderId(Guid Value);
 
-    IronTypeConfiguration.Global = config; // Sets the global configuration. This can be useful for applying mappings below when the extension does not have access to a service container and you don't want to explicitly pass the configuration.
-
-    return config;
-});
-```
-
-Then, apply the type mappings to your services.
-```csharp
-services.AddDbContext<AppDbContext>(x => x.UseIronType()); // Adds registered mappings to EntityFramework.
-
-services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.UseIronType()); // Adds registered mappings to System.Text.Json.
-
-services.AddSwaggerGen(x => x.UseIronType()); // Adds registered mappings to Swagger.
-
-app.UseSwagger().UseSwaggerUI();
-```
-
-And now the registered types are available for your DTOs throughout the stack!
-```csharp
 public class Order
 {
-    public OrderId Id { get; set; } // App custom type, see below.
-    public LocalDate OrderedOn { get; set; } // NodaTime type.
-    public string CustomerName { get; set; } = null!; // Standard primitive type.
-    public Length Length { get; set; } // UnitsNet type.
-    public Length Width { get; set; } // UnitsNet type.
-    public Length Height { get; set; } // UnitsNet type.
-    public Mass Weight { get; set; } // UnitsNet type.
+    public OrderId Id { get; set; }
 }
+```
 
-[SimpleTypeMapping] // Simple types can be mapped just by adding this attribute. A simple type is one which has a single constructor taking a single parameter, and has a single property. These are commonly used for ids and measures of a specific type (eg: PersonCount).
-public readonly record struct OrderId(Guid Value); // App custom "simple" type.
+Next, we well set up our configuration. By calling `.WithAssemblyTypeMappings(...)` we are telling it to automatically discover type mappings in the specified assembly (which we will create next).
 
-// App custom "complex" type. Because this type is more complex we implement a custom mapper below.
+**Without a service container**
+
+```csharp
+var config = new IronTypeConfiguration()
+    .WithAssemblyTypeMappings(typeof(AssemblyMarkerType));
+```
+
+**With a service container**
+
+```csharp
+services.AddIronType(config => config
+    .WithAssemblyTypeMappings(typeof(AssemblyMarkerType)));
+```
+
+Next, because our custom type is simple (containing one constructor with one argument and one public property) we can just mark it with a `[SimpleTypeMappingAttribute]` and IronType will create a simple type mapping for us.
+
+```csharp
+[SimpleTypeMapping]
+public readonly record struct OrderId(Guid Value);
+```
+
+Now we are ready to use our type mapping. Let's pull in the extensions for EntityFramework and System.Text.Json by referencing them in our project file.
+
+```csharp
+<ProjectReference Include="..\IronType.EntityFramework\IronType.EntityFramework.csproj" />
+<ProjectReference Include="..\IronType.SystemTextJson\IronType.SystemTextJson.csproj" />
+```
+
+And now in our configuration for each library let's tell it to use our type mappings.
+
+**Without a service container**
+
+```csharp
+var dbContextOptions = new DbContextOptionsBuilder<AppDbContext>()
+    .UseIronType()
+    .Options;
+
+var dbContext = new AppDbContext(dbContextOptions);
+
+var jsonOptions = new JsonSerializerOptions().UseIronType();
+```
+
+**With a service container (and API controllers in this example)**
+
+```csharp
+services.AddDbContext<AppDbContext>(x => x.UseIronType());
+
+services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.UseIronType());
+```
+
+Ok, let's try it out. Add the `Order` entity to your `DbContext`, insert and retreive an instance, and serialize and deserialize it.
+
+```csharp
+public class AppDbContext : DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+
+    public DbSet<Order> Orders => Set<Order>();
+}
+```
+
+**Without a service container**
+
+```csharp
+var order = new Order { Id = new OrderId(Guid.NewGuid()) };
+
+dbContext.Add(order);
+
+dbContext.SaveChanges();
+
+var persistedOrder = dbContext.Orders.Single(x => x.Id == order.Id);
+
+var serializedOrder = JsonSerializer.Serialize(persistedOrder, typeof(Order), jsonOptions);
+
+var deserializedOrder = JsonSerializer.Deserialize<Order>(serializedOrder, jsonOptions);
+```
+
+Now let's return our `Order` entities from a controller.
+
+**With a service container (in an API controller)**
+
+```csharp
+[ApiController]
+[Route("[controller]")]
+public class TestController
+{
+    private readonly AppDbContext _dbContext;
+
+    public Handler(AppDbContext dbContext)
+    {
+        _dbContext = dbContext;
+    }
+
+    [HttpGet]
+    public IEnumerable<Order> Get()
+        => _dbContext.Orders.ToArray();
+}
+```
+
+Congrats! Now you can keep adding type mappings and framework extensions and your types will just work throughout the stack.
+
+## Creating a custom type mapping
+
+For more complex types where the mapping can't be easily implied you will need to create a custom type mapping.
+
+To do so, just create a custom type and mapper and let the framework do the rest.
+
+```csharp
 public record struct Location(decimal Latitude, decimal Longitude)
 {
     public override string ToString() => $"({Latitude},{Longitude})";
 }
 
-// Complex type mapping.
+public class Order
+{
+    public OrderId Id { get; set; }
+    public Location Location { get; set; }
+}
+
 public class LocationTypeMapping : TypeMapping<Location, string>
 {
     private static readonly Regex _locationRegex = new (@"^\((?<latitude>\d+(\.\d+){0,1}),(?<longitude>\d+(\.\d+){0,1})\)$");
@@ -85,9 +167,49 @@ public class LocationTypeMapping : TypeMapping<Location, string>
 }
 ```
 
-To create your own custom mappings just extend `TypeMapping<TApp, TFramework>` or mark simple types with the [SimpleTypeMappingAttribute] and register it in your call to `AddIronType(...)` either explicitly or with `WithAssemblyTypeMappings(...)`.
+Following the previous example, insert and retreive an instance, and serialize and deserialize it.
 
+## Pulling in type mappings for other libraries
 
-**Nuget packages:**
+First, add references to the relavent extension libraries to your project file.
+
+```csharp
+<ProjectReference Include="..\IronType.UnitsNet\IronType.UnitsNet.csproj" />
+<ProjectReference Include="..\IronType.NodaTime\IronType.NodaTime.csproj" />
+```
+
+Then, add the types to your configuration from before.
+
+```csharp
+services.AddIronType(config => config
+    .WithUnitsNet()
+    .WithNodaTime()
+    .WithAssemblyTypeMappings(typeof(AssemblyMarkerType)));
+```
+
+And to your entity type.
+
+```csharp
+public class Order
+{
+    public OrderId Id { get; set; }
+    public Location Location { get; set; }
+    public LocalDate OrderedOn { get; set; }
+    public Length Length { get; set; }
+    public Length Width { get; set; }
+    public Length Height { get; set; }
+    public Mass Weight { get; set; }
+}
+```
+
+And again, the new types just work throughout the stack.
+
+## Nuget Packages
 
 - [Coming Soon](https://www.nuget.org/packages/.../)
+
+## License
+[MIT](/blob/master/LICENSE)
+
+## What Do You Think?
+I would love to hear feedback. Please reach out to me at [kevin@ackerman.ventures](mailto:kevin@ackerman.ventures)
