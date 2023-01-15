@@ -55,6 +55,7 @@ using (var scope = app.Services.CreateScope())
         Id = new OrderId(Guid.NewGuid()),
         CustomerName = "Test",
         OrderedOn = SystemClock.Instance.GetCurrentInstant().InUtc().Date,
+        Location = new Location(123.456m,789.012m),
         Height = Length.FromFeet(1),
         Length = Length.FromMeters(1),
         Width = Length.FromAngstroms(1),

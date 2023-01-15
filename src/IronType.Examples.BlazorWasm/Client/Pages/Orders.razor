@@ -16,6 +16,11 @@ else
             <tr>
                 <th>Ordered On</th>
                 <th>Customer Name</th>
+                <th>Location</th>
+                <th>Length</th>
+                <th>Width</th>
+                <th>Height</th>
+                <th>Weight</th>
             </tr>
         </thead>
         <tbody>
@@ -24,6 +29,11 @@ else
                 <tr>
                     <td>@order.OrderedOn</td>
                     <td>@order.CustomerName</td>
+                    <td>@order.Location</td>
+                    <td>@order.Length.Meters</td>
+                    <td>@order.Width.Meters</td>
+                    <td>@order.Height.Meters</td>
+                    <td>@order.Weight.Kilograms</td>
                 </tr>
             }
         </tbody>

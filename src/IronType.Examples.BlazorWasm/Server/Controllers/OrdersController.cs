@@ -21,6 +21,7 @@ namespace IronType.Examples.BlazorWasm.Server.Controllers
                     Id = x.Id,
                     OrderedOn = x.OrderedOn,
                     CustomerName = x.CustomerName,
+                    Location = x.Location,
                     Height = x.Height,
                     Length = x.Length,
                     Width = x.Width,
